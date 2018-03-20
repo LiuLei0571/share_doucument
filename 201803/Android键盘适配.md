@@ -202,6 +202,7 @@ InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_MET
 最终调用的也是 hideCurrentInputLocked 方法，在这个方法里面，我们传入的 flag 又有了作用。这里的判断用到了隐藏软键盘时使用的 flags，以及 mShowExplicitlyRequested 和 mShowForced 的值，如果不满足条件就直接返回了。可以看到当 flags 为 HIDE_IMPLICIT_ONLY 时，如果 mShowExplicitlyRequested 和 mShowForced 任意一个为 true，都会返回 false。当 flags 为 HIDE_NOT_ALWAYS 时，如果 mShowForced 为 true ，也会返回 false ，当 flags 为0时，两个 if 条件都不满足。这就解释了显示软键盘时使用的 flags 影响的是后面隐藏软键盘是否成功，以及隐藏软键盘时使用0作为 flags 总是能够隐藏软键盘。
 
 
+显示与隐藏键盘的方法：
 
 ```
    /**
@@ -270,5 +271,48 @@ InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_MET
         new SoftKeyboardStateWatcher(rootView, activity).addSoftKeyboardStateListener(listener);
 }
 ```
+
+## 软键盘踩过的坑：
+### 自定义右下角按钮
+使用 android:imeOptions 可对 Android 自带的软键盘进行一些界面上的设置：
+
+```
+<EditText  
+    android:id="@+id/text1"  
+    android:layout_width="150dip"  
+    android:layout_height="wrap_content" 
+    android:imeOptions="flagNoExtractUi"/> 
+```
+其中 android:imeOption 是显示右下角的显示内容，默认是回车键。
+
+```
+android:imeOptions="actionNone"  //输入框右侧不带任何提示 
+android:imeOptions="actionGo"    //右下角按键内容为'开始' 
+android:imeOptions="actionSearch"  //右下角按键为放大镜图片，搜索 
+android:imeOptions="actionSend"    //右下角按键内容为'发送' 
+android:imeOptions="actionNext"   //右下角按键内容为'下一步' 
+android:imeOptions="actionDone"  //右下角按键内容为'完成'  
+```
+
+同时对 EditText 添加 OnEditorActionListener 的监听事件，以便进行处理。
+###软键盘无法顶起页面
+ 开发中有个需求是将页面底部的一个按钮顶起，但是开发时发现Android5.0以后的版本设置了adjustResize属性后无法成功顶起。纠结了好久，最后在stackoverflow找到解决方案，那就是在根布局上加上fitsSystemWindow=”true”即可。
+ ```
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+>
+ ```
+
+   这里的fitsSystemWindow 具体的作用就是你的 contentView 是否忽略 actionBar,title,屏幕的底部虚拟按键，将整个屏幕当作可用的空间。 
+       正常情况，contentview 可用的空间是去除了actionbar,title,底部按键的空间后剩余的可用区域；这个属性设置为true,则忽略，false 则不忽略
+       
+### 自定义软键盘按钮功能失效
+在edittext上加入Android:imeOptions=”actionSearch”这个属性没响应，最后发现在2.3及以上版本不起作用，解决方案：加上
+```
+android:singleLine="true"
+```
+因为输入法键盘右下角默认的回车键本来就是换行用的，当设置单行后，回车换行就失去作用了，这样就可以设置为搜索、发送、go等等。
 
 
