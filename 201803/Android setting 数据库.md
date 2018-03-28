@@ -1,7 +1,7 @@
 #setting数据是什么？
-&emsp;setting 数据库管理了系统的一些常用设置，比如铃声 uri ,音量，本地语言等。用来保证下次用户开机时候和前次开机的配置信息是一致的。也就说明这个数据库是系统级别的数据库，不同的APP只要在权限满足的情况下都是可以调用这个数据库的，可以达到某些数据共享的特性，在Android运行中发挥着很大作用， 用户很难在这方面进行操作。
-&emsp;数据库的名字是 setting.db ，创建了2个表，分别是system，secure，下文的会具体指出在哪里。
-#setting在哪个地方
+&emsp;&emsp;setting 数据库管理了系统的一些常用设置，本质是一个系统级别的apk，比如铃声 uri ,音量，本地语言等。用来保证下次用户开机时候和前次开机的配置信息是一致的。也就说明这个数据库是系统级别的数据库，不同的APP只要在权限满足的情况下都是可以调用这个数据库的，可以达到某些数据共享的特性，在Android运行中发挥着很大作用， 用户很难在这方面进行操作。
+&emsp;&emsp;数据库的名字是 setting.db ，创建了2个表，分别是system，secure，下文的会具体指出在哪里。
+#setting关键类
 这里分成2部分，一部分是对外的提供的API，另外一部分是具体的实现。
 对外提供的 API 分析是在：
 > /frameworks/base/core/java/android/provider/Setting.java
@@ -134,15 +134,16 @@
     <fraction name="def_window_animation_scale">100%</fraction>
 ```
   
-#什么时候使用 setting
+#setting使用场景
 
     * 系统的一些常量，比如上述说到的WiFi状态，本地语言等
     * 存放一些不能被经常销毁的数据
+    * 保存用户设置的值到setting数据库，其他应用或Framework层通过监听SettingsProvider数据库的变化，来做一些相应的处理操作。
 
 #使用注意事项
 ## 使用方法
 ### 系统常量的查看与使用
-我们以无线网络是否可有无线网络通知为例，对应的 key 值为：WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON，
+&emsp;我们以无线网络是否可有无线网络通知为例，对应的 key 值为：WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON，
 我们在 settings.java 中确认是否有 WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON 该变量。
 ```
 Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON
@@ -192,6 +193,6 @@ Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON
 
 ##setting数据库版本迭代
 Android M之前的 SettingsProvider ：数据存放在自建的表当中
-Android L的 SettingsProvider ：不在使用数据库来存储系统设置，也就说找不到了setting.db 了，而是通过 xml 将系统的设置存储在了 /data/system/user 目录下
-
+Android L的 SettingsProvider ：不在使用数据库来存储系统设置，也就说找不到了setting.db 了，而是通过 xml 将系统的设置存储在了 /data/system/user 目录下 
+Android 7.0 之后已经不再使用原来的 DatabaseHelper 来处理数据库了，现在是使用新的SettingProvider.java
 
