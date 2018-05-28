@@ -2,13 +2,13 @@
 
 
 # 简介
-
+线程是操作系统进行调度操作的最小单元，线程池是一种线程复用的手段，通过缓存已经创建的线程，来减小线程使用过程中的消耗cpu的情况，同时把任务和任务的执行进行了解耦，把任务的和任务的执行进行解耦，使之任务本身和任务的执行进行分离。
 
 如图显示
 
 ![9660C770-FE5C-415D-919D-E5B2FB83FDEA](media/9660C770-FE5C-415D-919D-E5B2FB83FDEA.png)
 
-最顶层是继承了 Java 中的 Executor 接口，而真正实现实现线程池的类是 ThreadPoolExecutor,通过提供一系列的参数来配置线程池，也可以通过参数创建不同类型的线程池。
+最顶层是继承了 Java 中的 Executor 接口，该接口中只处理一个Runnable对象，而真正实现实现线程池的类是 ThreadPoolExecutor,通过提供一系列的参数来配置线程池，也可以通过参数创建不同类型的线程池。
 
 # 使用
 ##线程池构造方法
@@ -109,7 +109,36 @@ public void run() {
 });
 
 ```
+execute(Runnable command) 的源码如下：
 
+
+```
+  public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+     
+        int c = ctl.get();
+        if (workerCountOf(c) < corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        if (isRunning(c) && workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) && remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+```
+
+大致分为3个步骤（源码里面有英文解释，推荐还是去看源码英文备注）:
+1.判断当前线程数是否大于核心线程。如果小于并且可以加入队列，则获取核心线程
+2.判断核心线程是否在运行并且任务队列未满，并且再次获取核心线程，判断核心线程是否可以运行且当前的线程已经被移除了，则拒绝执行当前的command；如果核心线程为0，则新建一个线程。
+3.添加任务队列失败，则走reject流程。
 
 # 常见线程池
 
@@ -161,4 +190,5 @@ public ScheduledThreadPoolExecutor(int corePoolSize){
 ```
 
 核心线程数固定，非核心线程（闲着没活干会被立即回收）数没有限制。从上面代码也可以看出，ScheduledThreadPool主要用于执行定时任务以及有固定周期的重复任务。
+
 
