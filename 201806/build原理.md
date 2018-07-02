@@ -10,7 +10,7 @@
 4.转换所有的class文件，生成classes.dex文件
 5.打包生成apk
 6.对apk文件进行签名
-7.对签名后的 apk文件进行对其处理，不处理不被允许发送到google mark
+    7.对签名后的 apk文件进行对其处理，不处理不被允许发送到google mark
 ![](media/15288760138366.png)
 
 
@@ -24,8 +24,8 @@
 【工具】aapt工具
 【输出】打包好的资源（bin目录中的resources.ap_文件）、R.java文件（gen目录中）
        打包资源的工具aapt，大部分文本格式的XML资源文件会被编译成二进制格式的XML资源文件，除了assets和res/raw资源被原装不动地打包进APK之外，其它的资源都会被编译或者处理。 。
-生成过程主要是调用了aapt源码目录下的Resource.cpp文件中的buildResource（）函数，该函数首先检查AndroidManifest.xml的合法性，然后对res目录下的资源子目录进行处理，处理的函数为makeFileResource（），处理的内容包括资源文件名的合法性检查，向资源表table添加条目等，处理完后调用compileResourceFile（）函数编译res与asserts目录下的资源并生成resources.arsc文件，compileResourceFile（）函数位于aapt源码目录的ResourceTable.cpp文件中，该函数最后会调用parseAndAddEntry（）函数生成R.java文件，完成资源编译后，接下来调用compileXmlfile()函数对res目录的子目录下的xml文件分别进行编译，这样处理过的xml文件就简单的被“加密”了，最后将所有的资源与编译生成的resorces.arsc文件以及“加密”过的AndroidManifest.xml文件打包压缩成 resources.ap_ 文件（使用Ant工具命令行编译则会生成与build.xml中“project name”指定的属性同名的ap_文件）。
-
+生成过程主要是调用了aapt源码目录下的Resource.cpp文件中的buildResource（）函数，该函数首先检查AndroidManifest.xml的合法性，然后对res目录下的资源子目录进行处理，处理的函数为makeFileResource（），处理的内容包括资源文件名的合法性检查，向资源表table添加条目等，处理完后调用compileResourceFile（）函数编译res与asserts目录下的资源并生成resources.arsc文件，compileResourceFile（）函数位于aapt源码目录的ResourceTable.cpp文件中，该函数最后会调用parseAndAddEntry（）函数生成R.java文件，完成资源编译后，接下来调用compileXmlfile()函数对res目录的子目录下的xml文件分别进行编译，这样处理过的xml文件就简单的被“加密”了，最后将所有的资源与编译生成的索引表resorces.arsc文件以及“加密”过的AndroidManifest.xml文件打包压缩成 resources.ap_ 文件（使用Ant工具命令行编译则会生成与build.xml中“project name”指定的属性同名的ap_文件）。
+    R.java中的类型局势整数型，每一个变量均与resoucres.arsc索引表的参数相对应，而 resource.arsc 文件对应每一个资源。 
 
 
 第二步：处理aidl文件，生成相应的java文件。
@@ -47,6 +47,7 @@
 【工具】javac工具
 【输出】.dex文件
     前面多次提到，android系统dalvik虚拟机的可执行文件为dex格式，程序运行所需的classes.dex文件就是在这一步生成的，使用的工具为dx，dx工具主要的工作是将java字节码转换为dalvik字节码、压缩常量池、消除冗余信息等。
+![](media/15299265999677.jpg)
 
 
 第五步：打包生成apk。
