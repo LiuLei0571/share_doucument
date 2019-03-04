@@ -20,7 +20,7 @@
 Intent registerReceiver(@Nullable BroadcastReceiver receiver,IntentFilter filter);
 
 ```
-前面都不叫简单，我们直接看 ContextImpl 的 registerReceiverInternal 的方法
+前面都比较简单，我们直接看 ContextImpl 的 registerReceiverInternal 的方法
 
 ```
  private Intent registerReceiverInternal(BroadcastReceiver receiver, int userId,
