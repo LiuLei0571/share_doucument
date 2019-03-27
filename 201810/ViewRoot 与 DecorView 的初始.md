@@ -27,7 +27,6 @@ WindowManagerGlobal.java 的 addView 中
 
 
 #  DecorView
-<<<<<<< HEAD
 DectorView对象是所有应用窗口(Activity界面)的根View，继承了 FrameLayout,最顶部的 View 图层一般情况下它包含了LinearLayout，LinearLayout 里面有上下两部分，上部是标题栏(具体手机具体分析)，下部是内容区域，其中我们在设置setContentView的时候所设置的布局文件本质是把布局写在下部的内容区域里面，该内容区域的id是 content(android.R.id.content), DecorView 其实是一个 FrameLayout,View 层的时间都先经过 DecorView，然后才会传递到 View。
 
 ```
@@ -63,9 +62,7 @@ protected ViewGroup generateLayout(DecorView decor) {
 　　}
 　　//...
 }
-
 ```
-=======
-继承了 FrameLayout,最顶部的 View 图层一般情况下它包含了LinearLayout，LinearLayout 里面有上下两部分，上部是标题栏(具体手机具体分析)，下部是内容区域，其中我们在设置setContentView的时候所设置的布局文件本质是把布局写在下部的内容区域里面，该内容区域的id是 content(android.R.id.content), DecroView 其实是一个 FrameLayout,View 层的时间都先经过 DecorView，然后才会传递到 View。
->>>>>>> 6bb229a4507ca45141bd3270cb93f6aee9ba6a17
+根据窗口的风格修饰类型为该窗口选择不同的窗口布局文件(根视图)。这些窗口修饰布局文件指定一个用来存放Activity自定义布局文件的ViewGroup视图，一般为FrameLayout 其id 为： android:id="@android:id/content"。
+
 ![-w490](media/15536170263871.jpg)
