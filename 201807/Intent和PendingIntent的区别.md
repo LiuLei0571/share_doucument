@@ -4,7 +4,7 @@
 
 
 ## 具体还是来讲讲PendingIntent
-PendingIntent 是一个Intent 的描述，可以把这个描述交给别的程序，别的程序根据后面这个描述所持有的内容在后面的时间做一些其他的事情，实际操作的是对里面的Content参数，并且 PendingIntent 可以取消。
+PendingIntent 是一个Intent 的描述，可以把这个描述交给别的程序，别的程序根据后面这个描述所持有的内容在后面的时间做一些其他的事情，实际操作的是里面的Content参数，并且 PendingIntent 可以取消。
 例如，PendingIntent 调用getService 接口，可以包装一个启动的 Service 的 Intent。其他的三大组件也类似。
 PendingIntent 有4种 flag：
 * FLAG_ONE_SHOT                只执行一次
